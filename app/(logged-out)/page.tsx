@@ -17,7 +17,7 @@ const LandinPage = () => {
           <Link href="/login">Login</Link>
         </Button>
         <Button asChild variant="outline">
-          <Link href="/signup">Sign up</Link>
+          <Link href="/sign-up">Sign up</Link>
         </Button>
       </div>
     </>
