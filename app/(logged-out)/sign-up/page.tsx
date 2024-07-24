@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PersonStandingIcon } from "lucide-react";
+import { CalculatorIcon, CalendarIcon, PersonStandingIcon } from "lucide-react";
 
 import * as z from "zod";
 import { useForm } from "react-hook-form";
@@ -33,6 +33,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+import { format } from "date-fns";
+
+import { Calendar } from "@/components/ui/calendar";
 
 const formSchema = z
   .object({
@@ -87,6 +96,9 @@ const SignUpPage = () => {
   };
 
   const accountType = form.watch("accountType");
+
+  const dobFromDate = new Date();
+  dobFromDate.setFullYear(dobFromDate.getFullYear() - 120);
 
   return (
     <>
@@ -184,6 +196,49 @@ const SignUpPage = () => {
                   />
                 </>
               )}
+
+              <FormField
+                control={form.control}
+                name="dob"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Date of birth</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className="normal-case flex justify-between"
+                          >
+                            {!!field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+
+                            <CalendarIcon />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent align="start" className="w-auto">
+                        <Calendar
+                          mode="single"
+                          defaultMonth={field.value}
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          fixedWeeks
+                          weekStartsOn={1}
+                          fromDate={dobFromDate}
+                          toDate={new Date()}
+                          captionLayout="dropdown-buttons"
+                        />
+                      </PopoverContent>
+                    </Popover>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <Button type="submit">Sign up</Button>
             </form>
           </Form>
