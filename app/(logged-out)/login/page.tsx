@@ -26,6 +26,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -33,6 +35,7 @@ const formSchema = z.object({
 });
 
 const LoginPage = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,8 +44,9 @@ const LoginPage = () => {
     },
   });
 
-  const handleSubmit = () => {
-    console.log("loginin");
+  const handleSubmit = (data: z.infer<typeof formSchema>) => {
+    console.log("loginin", data);
+    router.push("/dashboard");
   };
   return (
     <>
@@ -87,7 +91,7 @@ const LoginPage = () => {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
+                      <PasswordInput
                         placeholder="Enter your password"
                         type="password"
                         {...field}

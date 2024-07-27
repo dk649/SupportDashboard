@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { CalculatorIcon, CalendarIcon, PersonStandingIcon } from "lucide-react";
 
 import * as z from "zod";
@@ -42,6 +43,8 @@ import {
 import { format } from "date-fns";
 
 import { Calendar } from "@/components/ui/calendar";
+import { PasswordInput } from "@/components/ui/password-input";
+import { useRouter } from "next/navigation";
 
 const formSchema = z
   .object({
@@ -50,6 +53,9 @@ const formSchema = z
     accountType: z.enum(["personal", "company"]),
     companyName: z.string().optional(),
     numberOfEmployees: z.coerce.number().optional(),
+    acceptTerms: z.boolean({
+      required_error: "You must accept the terms and conditions",
+    }),
 
     dob: z.date().refine((date) => {
       const today = new Date();
@@ -61,8 +67,22 @@ const formSchema = z
 
       return date <= eighteenYearsAgo;
     }, "You must be 18 years or older"),
+    password: z
+      .string()
+      .min(8, "password must contain at least 8 characters")
+      .refine((password) => {
+        return /^(?=.*[!@#$%^&*])(?=.*[A-Z]).*$/.test(password);
+      }, "password must contain at least 1 special character and 1 uppercase letter"),
+    passwordConfirm: z.string(),
   })
   .superRefine((data, ctx) => {
+    if (data.password !== data.passwordConfirm) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["passwordConfirm"],
+        message: "Passwords do not match",
+      });
+    }
     if (data.accountType === "company" && !data.companyName) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -84,15 +104,21 @@ const formSchema = z
   });
 
 const SignUpPage = () => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
+      password: "",
+      passwordConfirm: "",
+      companyName: "",
     },
   });
 
-  const handleSubmit = () => {
-    console.log("loginin");
+  const handleSubmit = (data: z.infer<typeof formSchema>) => {
+    console.log("loginin", data);
+    router.push("/dashboard");
   };
 
   const accountType = form.watch("accountType");
@@ -187,6 +213,7 @@ const SignUpPage = () => {
                             type="number"
                             min={0}
                             {...field}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
 
@@ -239,6 +266,71 @@ const SignUpPage = () => {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder="Enter your Password"
+                        type="password"
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="passwordConfirm"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Your Password</FormLabel>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder="Confirm Password"
+                        type="password"
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="acceptTerms"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex gap-2 items-center">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormLabel>I accept the terms and conditions</FormLabel>
+                    </div>
+                    <FormDescription>
+                      By Signing up you agree to our{" "}
+                      <Link className="text-primary hover:underline" href="/#">
+                        Terms & Conditions
+                      </Link>
+                    </FormDescription>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <Button type="submit">Sign up</Button>
             </form>
           </Form>
