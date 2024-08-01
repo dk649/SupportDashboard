@@ -76,10 +76,23 @@ const data = [
 const WorkLocationTrends = () => {
   return (
     <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={data}>
+      <BarChart
+        data={data}
+        className="[&_.recharts-tooltip-cursor]:fill-zinc-200 dark:[&_.recharts-tooltip-cursor]:fill-zinc-800"
+      >
         <XAxis dataKey="name" stroke="#888888" />
         <YAxis stroke="#888888" />
-        <Tooltip />
+        <Tooltip wrapperClassName="dark:!bg-black rounded-md dark:!border-border " />
+        <Legend
+          iconType="circle"
+          formatter={(value) => {
+            if (value === "wfh") {
+              return <div>Work from home</div>;
+            } else {
+              return <div>Work form office</div>;
+            }
+          }}
+        />
         <Bar
           dataKey="office"
           stackId={1}
