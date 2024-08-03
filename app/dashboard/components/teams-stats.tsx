@@ -12,6 +12,8 @@ import {
   LaptopIcon,
   ListChecksIcon,
   PartyPopperIcon,
+  PieChartIcon,
+  StarIcon,
   UserCheck2Icon,
   UserIcon,
   UsersIcon,
@@ -29,6 +31,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import TeamDistributionChart from "./teams/team-distribution-chart";
+import SupportTicketResolved from "./teams/support-tickets-resolved";
 
 const teamLeaders = [
   {
@@ -104,7 +108,10 @@ const TeamStatsPage = () => {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Team leaders</CardTitle>
+            <CardTitle className="text-base flex justify-between items-center mb-2">
+              <span> Team leaders</span>
+              <StarIcon className="text-yellow-400" />
+            </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
             {teamLeaders.map((leader) => (
@@ -136,8 +143,14 @@ const TeamStatsPage = () => {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Team distribution</CardTitle>
+            <CardTitle className="text-base flex justify-between items-center mb-2">
+              <span>Team distribution</span>
+              <PieChartIcon />
+            </CardTitle>
           </CardHeader>
+          <CardContent className="pb-0">
+            <TeamDistributionChart />
+          </CardContent>
         </Card>
       </div>
 
@@ -148,7 +161,9 @@ const TeamStatsPage = () => {
             <span>Support ticket sesolved</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="pl-0">{/* line graph */}</CardContent>
+        <CardContent className="pl-0">
+          <SupportTicketResolved />
+        </CardContent>
       </Card>
     </>
   );
