@@ -8,7 +8,9 @@ import { cn } from "@/lib/utils";
 
 const MainMenu = ({ className }: { className?: string }) => {
   return (
-    <nav className={cn(`bg-muted overflow-auto p-4 flex flex-col`, className)}>
+    <nav
+      className={cn(`md:bg-muted overflow-auto p-4 flex flex-col`, className)}
+    >
       <header className="border-b dark:border-b-black border-b-zinc-300 pb-4">
         <MenuTitle />
       </header>
